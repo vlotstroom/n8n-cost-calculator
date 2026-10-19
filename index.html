@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>n8n AI workflow cost calculator</title>
+<meta name="description" content="Free calculator: what each scheduled n8n workflow with AI nodes costs per day, month and year. Per-workflow attribution, editable model prices, runs in your browser.">
+<style>
+:root{--ink:#1c2733;--mut:#5d6b7a;--line:#dfe6ee;--bg:#f7f9fb;--acc:#0f6f5c;--acc2:#0b4f42;--warn:#a8442a;--card:#fff}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg)}
+main{max-width:920px;margin:0 auto;padding:24px 18px 64px}
+header h1{font-size:1.45rem;margin:0 0 6px}
+header p.sub{color:var(--mut);margin:0 0 4px}
+.langbar{margin:10px 0 18px}
+.langbar button{font:inherit;border:1px solid var(--line);background:var(--card);padding:4px 12px;border-radius:6px;cursor:pointer;color:var(--mut)}
+.langbar button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:18px}
+.card h2{font-size:1.02rem;margin:0 0 12px}
+label{display:block;font-size:.86rem;color:var(--mut);margin:10px 0 4px}
+input[type=number],input[type=text],select{width:100%;font:inherit;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink)}
+.ptable{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px;align-items:center}
+.ptable .ph{font-size:.8rem;color:var(--mut);text-transform:none}
+.wfrow{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:12px}
+.wfgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.3fr;gap:10px}
+.wfgrid2{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-top:2px}
+@media(max-width:700px){.wfgrid,.wfgrid2,.ptable{grid-template-columns:1fr}}
+.rowhead{display:flex;justify-content:space-between;align-items:center}
+.rowhead .rm{font:inherit;font-size:.8rem;border:1px solid var(--line);background:#fff;color:var(--mut);border-radius:6px;padding:3px 10px;cursor:pointer}
+.rowhead .rm:disabled{opacity:.4;cursor:default}
+button.add{font:inherit;border:1px dashed var(--acc);background:#fff;color:var(--acc);border-radius:8px;padding:8px 14px;cursor:pointer}
+button.add:disabled{opacity:.4;cursor:default}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:none}
+.row .k{color:var(--mut);font-size:.9rem}
+.row .v{font-weight:600;font-variant-numeric:tabular-nums}
+.row.big .v{font-size:1.35rem;color:var(--warn)}
+.wfline{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.wfline:last-of-type{border-bottom:none}
+.wfline .h{font-size:.78rem;color:var(--mut)}
+.wfline .n{font-weight:600}
+.wfline .c{font-variant-numeric:tabular-nums;text-align:right}
+.note{font-size:.8rem;color:var(--mut);margin-top:10px}
+footer{margin-top:26px;font-size:.85rem;color:var(--mut)}
+footer a{color:var(--acc)}
+.badge{display:inline-block;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--acc2);border:1px solid var(--acc);border-radius:4px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+</style>
+</head>
+<body>
+<main>
+<header>
+<h1 id="t-title">n8n AI workflow cost calculator <span class="badge">free tool</span></h1>
+<p class="sub" id="sub">For scheduled n8n workflows with AI nodes. See what each one costs per month before the invoice surprises you. No signup, runs in your browser, nothing is sent anywhere.</p>
+<div class="langbar" role="group" aria-label="Language">
+<button id="btn-en" aria-pressed="true" onclick="setLang('en')">English</button>
+<button id="btn-nl" aria-pressed="false" onclick="setLang('nl')">Nederlands</button>
+</div>
+</header>
+
+<section class="card" aria-labelledby="h-price">
+<h2 id="h-price">Model prices, per 1M tokens</h2>
+<div class="ptable">
+<span class="ph" id="ph-model">model</span>
+<span class="ph" id="ph-in">price in</span>
+<span class="ph" id="ph-out">price out</span>
+
+<label for="pin-m1">GPT-4o</label>
+<input type="number" id="pin-m1" min="0" step="0.01" value="2.50" inputmode="decimal">
+<input type="number" id="pout-m1" min="0" step="0.01" value="10.00" inputmode="decimal">
+
+<label for="pin-m2">GPT-4o mini</label>
+<input type="number" id="pin-m2" min="0" step="0.01" value="0.15" inputmode="decimal">
+<input type="number" id="pout-m2" min="0" step="0.01" value="0.60" inputmode="decimal">
+
+<label for="pin-m3">Claude Sonnet</label>
+<input type="number" id="pin-m3" min="0" step="0.01" value="3.00" inputmode="decimal">
+<input type="number" id="pout-m3" min="0" step="0.01" value="15.00" inputmode="decimal">
+
+<label for="pin-m4">Gemini Flash</label>
+<input type="number" id="pin-m4" min="0" step="0.01" value="0.10" inputmode="decimal">
+<input type="number" id="pout-m4" min="0" step="0.01" value="0.40" inputmode="decimal">
+</div>
+<p class="note" id="t-pnote">Rough public list prices, not a price feed. Edit them to what you actually pay, or repurpose a row for any other model. Every total below uses only the numbers on this page.</p>
+</section>
+
+<section class="card" aria-labelledby="h-wf">
+<h2 id="h-wf">Your workflows</h2>
+<div id="wfrows"></div>
+<button class="add" id="btn-add" onclick="addRow()">+ <span id="t-add">Add workflow</span></button>
+</section>
+
+<section class="card" aria-labelledby="h-out">
+<h2 id="h-out">What it costs</h2>
+<div class="wfline">
+<span class="h" id="c-wf">workflow</span>
+<span class="h c" id="c-run">per run</span>
+<span class="h c" id="c-mon">per month</span>
+</div>
+<div id="outrows"></div>
+<div class="row big" style="margin-top:10px"><span class="k" id="l-month">All workflows per month</span><span class="v" id="o-month">0</span></div>
+<div class="row"><span class="k" id="l-day">per day</span><span class="v" id="o-day">0</span></div>
+<div class="row"><span class="k" id="l-week">per week</span><span class="v" id="o-week">0</span></div>
+<div class="row"><span class="k" id="l-year">per year</span><span class="v" id="o-year">0</span></div>
+<div class="row"><span class="k" id="l-ai">of which AI spend, per month</span><span class="v" id="o-ai">0</span></div>
+<div class="row"><span class="k" id="l-oth">of which other metered spend, per month</span><span class="v" id="o-oth">0</span></div>
+<div class="row"><span class="k" id="l-top">Biggest spender</span><span class="v" id="o-top">&mdash;</span></div>
+<p class="note" id="t-onote">Plain arithmetic. Cost per run = AI calls &times; (prompt tokens &times; price in + completion tokens &times; price out) &divide; 1,000,000 + other cost per run. Month = runs per day &times; 30. Totals use the same currency as the prices you entered.</p>
+</section>
+
+<footer>
+<p id="t-foot1">Built by Vlotstroom. We sell a ready-made n8n automation pack for salons and clinics (waitlist autofill, appointment reminders, no-show rescue and more) for &euro;29:</p>
+<p><a href="https://vlotstream.gumroad.com/l/rhmxw" id="t-link" rel="noopener">Afspraakpack for n8n</a></p>
+<p><span id="t-foot2">Related free tools:</span> <a href="https://vlotstroom.github.io/noshow-calculator/" rel="noopener"><span id="l-link1">no-show cost calculator</span></a> &middot; <a href="https://vlotstroom.github.io/waitlist-calculator/" rel="noopener"><span id="l-link2">waitlist fill-rate calculator</span></a>.</p>
+</footer>
+</main>
+<script>
+var I18N={
+ en:{"sub":"For scheduled n8n workflows with AI nodes. See what each one costs per month before the invoice surprises you. No signup, runs in your browser, nothing is sent anywhere.",
+  "h-price":"Model prices, per 1M tokens","ph-model":"model","ph-in":"price in","ph-out":"price out",
+  "t-pnote":"Rough public list prices, not a price feed. Edit them to what you actually pay, or repurpose a row for any other model. Every total below uses only the numbers on this page.",
+  "h-wf":"Your workflows","l-name":"workflow name","l-runs":"runs per day","l-calls":"AI calls per run","l-model":"model",
+  "l-pt":"prompt tokens per call","l-ct":"completion tokens per call","l-other":"other metered cost per run (SMS, scrapers, APIs)",
+  "t-add":"Add workflow","t-rm":"Remove","h-out":"What it costs","c-wf":"workflow","c-run":"per run","c-mon":"per month",
+  "l-month":"All workflows per month","l-day":"per day","l-week":"per week","l-year":"per year",
+  "l-ai":"of which AI spend, per month","l-oth":"of which other metered spend, per month","l-top":"Biggest spender",
+  "t-onote":"Plain arithmetic. Cost per run = AI calls \\u00d7 (prompt tokens \\u00d7 price in + completion tokens \\u00d7 price out) \\u00f7 1,000,000 + other cost per run. Month = runs per day \\u00d7 30. Totals use the same currency as the prices you entered.",
+  "t-foot1":"Built by Vlotstroom. We sell a ready-made n8n automation pack for salons and clinics (waitlist autofill, appointment reminders, no-show rescue and more) for \\u20ac29:",
+  "t-foot2":"Related free tools:","l-link1":"no-show cost calculator","l-link2":"waitlist fill-rate calculator"},
+ nl:{"sub":"Voor geplande n8n-workflows met AI-nodes. Zie wat elke workflow per maand kost voordat de factuur je verrast. Geen account, draait in je browser, er wordt niets verstuurd.",
+  "h-price":"Modelprijzen, per 1M tokens","ph-model":"model","ph-in":"prijs in","ph-out":"prijs uit",
+  "t-pnote":"Grove openbare lijstprijzen, geen prijzenfeed. Zet ze op wat je echt betaalt, of gebruik een rij voor een ander model. Elke uitkomst hieronder rekent alleen met de getallen op deze pagina.",
+  "h-wf":"Jouw workflows","l-name":"naam workflow","l-runs":"runs per dag","l-calls":"AI-calls per run","l-model":"model",
+  "l-pt":"prompt-tokens per call","l-ct":"completion-tokens per call","l-other":"overige metered kosten per run (sms, scrapers, API's)",
+  "t-add":"Workflow toevoegen","t-rm":"Verwijderen","h-out":"Wat het kost","c-wf":"workflow","c-run":"per run","c-mon":"per maand",
+  "l-month":"Alle workflows per maand","l-day":"per dag","l-week":"per week","l-year":"per jaar",
+  "l-ai":"waarvan AI-uitgaven, per maand","l-oth":"waarvan overige gebruikskosten, per maand","l-top":"Grootste kostenpost",
+  "t-onote":"Simpele rekensom. Kosten per run = AI-calls \\u00d7 (prompt-tokens \\u00d7 prijs in + completion-tokens \\u00d7 prijs uit) \\u00f7 1.000.000 + overige kosten per run. Maand = runs per dag \\u00d7 30. Bedragen gebruiken dezelfde valuta als de prijzen die je invult.",
+  "t-foot1":"Gemaakt door Vlotstroom. Wij verkopen een kant-en-klare n8n-automatiseringspack voor salons en klinieken (wachtlijst-autofill, afspraakherinneringen, no-show rescue en meer) voor \\u20ac29:",
+  "t-foot2":"Gerelateerde gratis tools:","l-link1":"no-show kosten calculator","l-link2":"wachtlijst vulpercentage calculator"}
+};
+var MODELS=[["m1","GPT-4o"],["m2","GPT-4o mini"],["m3","Claude Sonnet"],["m4","Gemini Flash"]];
+var LANG="en";
+var seq=0;
+
+function fm(n){
+ if(!isFinite(n))return"0";
+ if(n>=1000)return n.toLocaleString("en-US",{maximumFractionDigits:0});
+ if(n>=10)return n.toFixed(1);
+ if(n>=0.01)return n.toFixed(2);
+ return n.toFixed(4);
+}
+function num(v){var n=parseFloat(v);return isFinite(n)&&n>0?n:0;}
+
+function addRow(name,runs,calls,model,pt,ct,other){
+ var box=document.getElementById("wfrows");
+ if(box.querySelectorAll(".wfrow").length>=8)return;
+ seq++;
+ var d=document.createElement("div");
+ d.className="wfrow";
+ d.innerHTML=
+ '<div class="rowhead"><label style="margin:0" data-i="l-name">'+I18N[LANG]["l-name"]+'</label><button class="rm" onclick="rmRow(this)" data-i="t-rm">'+I18N[LANG]["t-rm"]+'</button></div>'+
+ '<div class="wfgrid">'+
+ '<input type="text" data-k="name" value="'+(name||("workflow "+seq))+'">'+
+ '<div><input type="number" data-k="runs" min="0" step="1" value="'+(runs!=null?runs:24)+'" inputmode="numeric"></div>'+
+ '<div><input type="number" data-k="calls" min="0" step="1" value="'+(calls!=null?calls:2)+'" inputmode="numeric"></div>'+
+ '<div><select data-k="model">'+MODELS.map(function(m){return '<option value="'+m[0]+'"'+(m[0]===model?" selected":"")+'>'+m[1]+'</option>';}).join("")+'</select></div>'+
+ '</div>'+
+ '<div class="wfgrid2">'+
+ '<div><input type="number" data-k="pt" min="0" step="100" value="'+(pt!=null?pt:2000)+'" inputmode="numeric"></div>'+
+ '<div><input type="number" data-k="ct" min="0" step="100" value="'+(ct!=null?ct:500)+'" inputmode="numeric"></div>'+
+ '<div><input type="number" data-k="other" min="0" step="0.001" value="'+(other!=null?other:0)+'" inputmode="decimal"></div>'+
+ '<div></div>'+
+ '</div>';
+ box.appendChild(d);
+ calc();
+}
+
+function rmRow(btn){
+ var box=document.getElementById("wfrows");
+ var rows=box.querySelectorAll(".wfrow");
+ if(rows.length<=1)return;
+ var r=btn.closest(".wfrow");
+ if(r)r.remove();
+ calc();
+}
+
+function priceOf(m){
+ return {pin:num(document.getElementById("pin-"+m).value),pout:num(document.getElementById("pout-"+m).value)};
+}
+
+function calc(){
+ var box=document.getElementById("wfrows");
+ var rows=[];
+ box.querySelectorAll(".wfrow").forEach(function(r){
+  var g=function(k){return r.querySelector('[data-k="'+k+'"]').value;};
+  var m=priceOf(g("model"));
+  var runs=num(g("runs")),calls=num(g("calls")),pt=num(g("pt")),ct=num(g("ct")),other=num(g("other"));
+  var aiRun=calls*((pt*m.pin+ct*m.pout)/1000000);
+  var perRun=aiRun+other;
+  rows.push({name:g("name")||("workflow"),perRun:perRun,aiRun:aiRun,otherRun:other,
+   day:perRun*runs,month:perRun*runs*30,aiMonth:aiRun*runs*30,otherMonth:other*runs*30});
+ });
+ var t={day:0,week:0,month:0,year:0,ai:0,oth:0};
+ rows.forEach(function(r){t.day+=r.day;t.week+=r.day*7;t.month+=r.month;t.year+=r.month*12;t.ai+=r.aiMonth;t.oth+=r.otherMonth;});
+ var top=null;
+ rows.forEach(function(r){if(!top||r.month>top.month)top=r;});
+ var o=document.getElementById("outrows");
+ o.innerHTML=rows.map(function(r){
+  return '<div class="wfline"><span class="n">'+r.name.replace(/</g,"&lt;")+'</span><span class="c">'+fm(r.perRun)+'</span><span class="c">'+fm(r.month)+'</span></div>';
+ }).join("");
+ document.getElementById("o-day").textContent=fm(t.day);
+ document.getElementById("o-week").textContent=fm(t.week);
+ document.getElementById("o-month").textContent=fm(t.month);
+ document.getElementById("o-year").textContent=fm(t.year);
+ document.getElementById("o-ai").textContent=fm(t.ai);
+ document.getElementById("o-oth").textContent=fm(t.oth);
+ document.getElementById("o-top").textContent=top?top.name.replace(/</g,"&lt;")+" ("+fm(top.month)+")":"\u2014";
+ var rmBtns=box.querySelectorAll(".rm");
+ rmBtns.forEach(function(b){b.disabled=rows.length<=1;});
+ document.getElementById("btn-add").disabled=rows.length>=8;
+ window.__calc={rows:rows,tot:t,top:top};
+}
+
+var TRANS=["sub","h-price","ph-model","ph-in","ph-out","t-pnote","h-wf","t-add","h-out","c-wf","c-run","c-mon","l-month","l-day","l-week","l-year","l-ai","l-oth","l-top","t-onote","t-foot1","t-foot2","l-link1","l-link2"];
+function setLang(l){
+ LANG=l;
+ document.documentElement.lang=l;
+ for(var i=0;i<TRANS.length;i++){var el=document.getElementById(TRANS[i]);if(el)el.textContent=I18N[l][TRANS[i]];}
+ document.getElementById("btn-en").setAttribute("aria-pressed",l==="en");
+ document.getElementById("btn-nl").setAttribute("aria-pressed",l==="nl");
+ document.querySelectorAll("[data-i]").forEach(function(el){
+  var k=el.getAttribute("data-i");
+  if(I18N[l][k])el.textContent=I18N[l][k];
+ });
+ calc();
+}
+
+document.getElementById("wfrows").addEventListener("input",calc);
+document.getElementById("wfrows").addEventListener("change",calc);
+["pin-m1","pout-m1","pin-m2","pout-m2","pin-m3","pout-m3","pin-m4","pout-m4"].forEach(function(id){
+ document.getElementById(id).addEventListener("input",calc);
+});
+addRow("scheduled agent",24,2,"m2",2000,500,0);
+setLang("en");
+</script>
+</body>
+</html>
