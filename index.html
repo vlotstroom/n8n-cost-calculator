@@ -122,7 +122,7 @@ footer a{color:var(--acc)}
 <p id="t-foot1">Built by Vlotstroom. We sell a ready-made n8n automation pack for salons and clinics (waitlist autofill, appointment reminders, no-show rescue and more) for &euro;29:</p>
 <p><a href="https://vlotstream.gumroad.com/l/rhmxw" id="t-link" rel="noopener">Afspraakpack for n8n</a></p>
 <p><a href="https://vlotstroom.hmdev.nl/" id="t-home" rel="noopener">vlotstroom.hmdev.nl</a></p>
-<p><span id="t-foot2">Related free tools:</span> <a href="https://vlotstroom.github.io/noshow-calculator/" rel="noopener"><span id="l-link1">no-show cost calculator</span></a> &middot; <a href="https://vlotstroom.github.io/waitlist-calculator/" rel="noopener"><span id="l-link2">waitlist fill-rate calculator</span></a>.</p>
+<p><span id="t-foot2">Related free tools:</span> <a href="https://vlotstroom.github.io/noshow-calculator/" rel="noopener"><span id="l-link1">no-show cost calculator</span></a> &middot; <a href="https://vlotstroom.github.io/waitlist-calculator/" rel="noopener"><span id="l-link2">waitlist fill-rate calculator</span></a> &middot; <a href="https://vlotstroom.github.io/n8n-client-price-calculator/" rel="noopener"><span id="l-link3">n8n client price calculator</span></a>.</p>
 </footer>
 </main>
 <script>
@@ -137,7 +137,7 @@ var I18N={
   "l-ai":"of which AI spend, per month","l-oth":"of which other metered spend, per month","l-top":"Biggest spender",
   "t-onote":"Plain arithmetic. Cost per run = AI calls \\u00d7 (prompt tokens \\u00d7 price in + completion tokens \\u00d7 price out) \\u00f7 1,000,000 + other cost per run. Month = runs per day \\u00d7 30. Totals use the same currency as the prices you entered.",
   "t-foot1":"Built by Vlotstroom. We sell a ready-made n8n automation pack for salons and clinics (waitlist autofill, appointment reminders, no-show rescue and more) for \\u20ac29:",
-  "t-foot2":"Related free tools:","l-link1":"no-show cost calculator","l-link2":"waitlist fill-rate calculator"},
+  "t-foot2":"Related free tools:","l-link1":"no-show cost calculator","l-link2":"waitlist fill-rate calculator","l-link3":"n8n client price calculator"},
  nl:{"sub":"Voor geplande n8n-workflows met AI-nodes. Zie wat elke workflow per maand kost voordat de factuur je verrast. Geen account, draait in je browser, er wordt niets verstuurd.",
   "h-price":"Modelprijzen, per 1M tokens","ph-model":"model","ph-in":"prijs in","ph-out":"prijs uit",
   "t-pnote":"Grove openbare lijstprijzen, geen prijzenfeed. Zet ze op wat je echt betaalt, of gebruik een rij voor een ander model. Elke uitkomst hieronder rekent alleen met de getallen op deze pagina.",
@@ -148,7 +148,7 @@ var I18N={
   "l-ai":"waarvan AI-uitgaven, per maand","l-oth":"waarvan overige gebruikskosten, per maand","l-top":"Grootste kostenpost",
   "t-onote":"Simpele rekensom. Kosten per run = AI-calls \\u00d7 (prompt-tokens \\u00d7 prijs in + completion-tokens \\u00d7 prijs uit) \\u00f7 1.000.000 + overige kosten per run. Maand = runs per dag \\u00d7 30. Bedragen gebruiken dezelfde valuta als de prijzen die je invult.",
   "t-foot1":"Gemaakt door Vlotstroom. Wij verkopen een kant-en-klare n8n-automatiseringspack voor salons en klinieken (wachtlijst-autofill, afspraakherinneringen, no-show rescue en meer) voor \\u20ac29:",
-  "t-foot2":"Gerelateerde gratis tools:","l-link1":"no-show kosten calculator","l-link2":"wachtlijst vulpercentage calculator"}
+  "t-foot2":"Gerelateerde gratis tools:","l-link1":"no-show kosten calculator","l-link2":"wachtlijst vulpercentage calculator","l-link3":"n8n-klantprijs rekentool"}
 };
 var MODELS=[["m1","GPT-4o"],["m2","GPT-4o mini"],["m3","Claude Sonnet"],["m4","Gemini Flash"]];
 var LANG="en";
@@ -233,7 +233,7 @@ function calc(){
  window.__calc={rows:rows,tot:t,top:top};
 }
 
-var TRANS=["sub","h-price","ph-model","ph-in","ph-out","t-pnote","h-wf","t-add","h-out","c-wf","c-run","c-mon","l-month","l-day","l-week","l-year","l-ai","l-oth","l-top","t-onote","t-foot1","t-foot2","l-link1","l-link2"];
+var TRANS=["sub","h-price","ph-model","ph-in","ph-out","t-pnote","h-wf","t-add","h-out","c-wf","c-run","c-mon","l-month","l-day","l-week","l-year","l-ai","l-oth","l-top","t-onote","t-foot1","t-foot2","l-link1","l-link2","l-link3"];
 function setLang(l){
  LANG=l;
  document.documentElement.lang=l;
